@@ -26,13 +26,71 @@ def portfolio_volatility(
    vector_w_t = np.array([vector_w])
 
    # varianza
-   vector_cov = np.dot(m_cov,vector_w_t)
-   varianza = np.dot(vector_cov,vector_w)
+   vector_cov = np.dot(m_cov,vector_w)
+   varianza = np.dot(vector_w_t, vector_cov)
 
    # volatilidad
    vol = np.sqrt(varianza)
 
-   return vol
+   return vol[0]
+
+def portfolio_returns(
+      tickers: list,
+      start: str,
+      end: str
+        ) -> pd.DataFrame:
+    '''
+    Descarga desde la base de datos los precios
+    de los instrumentos indicados en el rango de fechas.
+
+    tickers (list):
+        lista de nemos de instrumentos que componen
+        el portafolio
+    
+    start (str):
+        fecha de inicio de precios
+    
+    end (str):
+        fecha de termino de precios
+    
+    Return (pd.DataFrame): Dataframe de retornos diarios
+    '''
+
+    # descargar precios
+    df = market_prices(
+        start_date=start, 
+        end_date=end, 
+        tickers=tickers
+        )
+    
+    # pivot retornos
+    df_pivot = pd.pivot_table(
+        data=df, 
+        index='FECHA', 
+        columns='TICKER', 
+        values='PRECIO_CIERRE',
+        aggfunc='max'
+    )
+    df_pivot = df_pivot.pct_change().dropna()
+
+    return df_pivot
+
+def VaR(sigma:float, confidence:float) -> float:
+    '''
+    Calculo del Value at Risk al nivel de
+    confianza indicado. Con supuesto de media cero
+    '''
+
+    # estadistico z al nivel de confianza
+    z_score = stats.norm.ppf(confidence)
+
+    # VaR
+    var = z_score * sigma
+
+    return var
+
+
+
 
 
 
