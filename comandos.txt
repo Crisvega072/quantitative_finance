@@ -1,0 +1,17 @@
+# === PYTHON ===
+
+
+# === GITHUB ===
+
+#estado de la branch 
+git status 
+
+#guardar cambios
+git add
+
+$comentar cambios
+git commit -m "rama actualizada" 
+
+# actualizar branch 
+git push origin main
+
